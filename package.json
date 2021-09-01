@@ -1,0 +1,23 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "build": "lerna run --parallel build",
+    "test": "lerna run --parallel test",
+    "lint": "eslint 'packages/**/*.ts'"
+  },
+  "devDependencies": {
+    "@types/node": "^16.7.10",
+    "@typescript-eslint/eslint-plugin": "^4.30.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "husky": "^7.0.2",
+    "lerna": "^4.0.0",
+    "prettier": "^2.3.2",
+    "typescript": "^4.4.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
