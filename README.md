@@ -8,7 +8,7 @@ Make sure you have `npm` and `yarn` installed:
 
 ```bash
 npm install -g npm
-npm install --g yarn
+npm install -g yarn
 ```
 
 Install the dependencies:

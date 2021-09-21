@@ -4,6 +4,7 @@ import { injected } from './connectors';
 import { useEagerConnect, useInactiveListener, useMoodblockFactory, useWeb3 } from './hooks';
 import { ConnectorNames } from './types';
 
+// TODO: Move to constants
 const MOODBLOCK_TOKEN_CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
 const connectorsByName: { [connectorName in ConnectorNames]: any } = {
