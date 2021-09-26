@@ -7,6 +7,6 @@ import "./ERC677.sol";
 contract LinkTokenMock is ERC20, ERC677 {
     constructor() ERC20("Chainlink", "LINK") {
         _mint(msg.sender, 100*10**18);
-        _mint(address(0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9), 100*10**18); // TODO: Refactor funding LINK to contract
+        _mint(address(0x0165878A594ca255338adfa4d48449f69242Eb8F), 100*10**18); // TODO: Refactor funding LINK to contract
     }
 }

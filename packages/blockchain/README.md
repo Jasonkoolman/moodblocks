@@ -1,6 +1,6 @@
 # @moodblocks/blockchain
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+Contracts for Moodblock NFTs, stored and rendered on-chain.
 
 TODO: Use solcov: https://hardhat.org/plugins/solidity-coverage.html
 
@@ -27,6 +27,10 @@ Open a new terminal and deploy the smart contract in the localhost network
 
 `yarn dev:deploy`
 
+Mint your first moodblock:
+
+`yarn dev:mint`
+
 Check balance of the first address:
 
 `npx hardhat balance --network localhost --account 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
@@ -47,7 +51,7 @@ const token = await Token.attach('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
 Interact with the contract:
 
 ```js
-await token.transfer('0xdd2fd4581271e230360230f9337d5c0430bf44c0', 42069);
+await token.transfer('0xdd2fd4581271e230360230f9337d5c0430bf44c0', 10000);
 ```
 
 - Use `await` to avoid Promise objects.

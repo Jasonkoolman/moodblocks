@@ -4,53 +4,89 @@
 
 pragma solidity ^0.8.0;
 
+import "./details/BackgroundDetail.sol";
+import "./details/EyesDetail.sol";
+import "./details/MouthDetail.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+
 library NFTDescriptor {
-    struct SVGParams {
-        uint8 skin;
-        uint8 face;
-        uint8 eye;
-        uint8 eyeColor;
-        uint8 eyebrow;
-        uint8 mouth;
-        uint8 mark;
-        uint8 background;
+    /// @dev NFT definition
+    struct NFTParams {
+        EyesDetail.Eyes eyes;
+        MouthDetail.Mouth mouth;
+        BackgroundDetail.Background background;
+        address creator;
+        uint256 created;
+        uint16 generation;
     }
 
-    function generateSVG(SVGParams memory params) internal pure returns (string memory) {
-        string memory children = string(
-            abi.encodePacked(
-                generateBackground()
-            )
-        );
-
-        return wrapSVGElement(children);
-    }
-
-    function generateBackground() private pure returns (string memory) {
-        return '<rect width="420" height="420" fill="#F8DBFB"/>';
-    }
-
-    /// @dev generate SVG header
-    function wrapSVGElement(string memory children) private pure returns (string memory) {
+    /// @dev Combine all the SVGs to generate the final image
+    function generateImage(NFTParams memory params) internal view returns (string memory) {
         return string(
             abi.encodePacked(
-                '<svg width="420" height="420" viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg">',
-                children,
+                '<svg width="420" height="420" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">',
+                    BackgroundDetail.background(params.background.fill),
+                    getDetailSVG(address(EyesDetail), params.eyes.selector),
+                    getDetailSVG(address(MouthDetail), params.mouth.selector),
                 '</svg>'
             )
         );
     }
 
-    /// @dev Get the json attribute as
-    ///    {
-    ///      "name": "Skin",
-    ///      "value": "Human"
-    ///    }
-    function getJsonAttribute(
+    /// @dev Generates JSON metadata name
+    function generateName(uint256 tokenId) internal pure returns (string memory) {
+        return string(
+            abi.encodePacked(
+                "Moodblock ", Strings.toString(tokenId)
+            )
+        );
+    }
+
+    /// @dev Generates JSON metadata description
+    function generateDescription(NFTParams memory params) internal pure returns (string memory) {
+        bool original = params.generation == 1;
+        return string(
+            abi.encodePacked(
+                "Minted by ", Strings.toHexString(uint256(uint160(params.creator))), ".",
+                (original ? " A first of its kind!" : "")
+            )
+        );
+    }
+
+    /// @dev Generates JSON metadata attributes
+    function generateAttributes(NFTParams memory params) internal pure returns (string memory) {
+        return string(
+            abi.encodePacked(
+                "[",
+                    getJSONAttribute("Eyes", params.eyes.name, false),
+                    getJSONAttribute("Mouth", params.mouth.name, false),
+                    getJSONAttribute("Background", params.background.name, false),
+                    getJSONAttribute("Generation", Strings.toString(params.generation), false),
+                    getJSONAttribute("Created", Strings.toString(params.created), true),
+                "]"
+            )
+        );
+    }
+
+    /// @dev Call the library item function.
+    function getDetailSVG(address lib, string memory selector) private view returns (string memory) {
+        (bool success, bytes memory data) = lib.staticcall(
+            abi.encodeWithSignature(string(abi.encodePacked(selector, "()")))
+        );
+        require(success, "DetailHelper: Failed to call detail library");
+        return abi.decode(data, (string));
+    }
+
+    /// @dev Get the JSON attribute as
+    ///  {
+    ///      "name": "Eyes",
+    ///      "value": "Googly"
+    ///  }
+    function getJSONAttribute(
         string memory name,
         string memory value,
-        bool end
+        bool last
     ) private pure returns (string memory json) {
-        return string(abi.encodePacked('{ "name" : "', name, '", "value" : "', value, '" }', end ? "" : ","));
+        return string(abi.encodePacked('{"name": "', name, '", "value": "', value, '"}', last ? "" : ","));
     }
 }

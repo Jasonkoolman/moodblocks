@@ -10,17 +10,11 @@ interface IMoodblockDescriptor {
     /// @return The URI of the ERC721-compliant metadata
     function tokenURI(IMoodblock.Moodblock memory moodblock, uint256 tokenId) external view returns (string memory);
 
-    /// @notice Generate randomly an ID for the eye item.
+    /// @notice Generate randomly an ID for the eyes.
     /// @param tokenId The current tokenId.
     /// @param seed Used for the initialization of the number generator.
     /// @return The eye item id.
-    function generateEyeId(uint256 tokenId, uint256 seed) external view returns (uint8);
-
-    /// @notice Generate randomly an ID for the eyebrow item.
-    /// @param tokenId The current tokenId
-    /// @param seed Used for the initialization of the number generator.
-    /// @return The eyebrow item id.
-    function generateEyebrowId(uint256 tokenId, uint256 seed) external view returns (uint8);
+    function generateEyesId(uint256 tokenId, uint256 seed) external view returns (uint8);
 
     /// @notice Generate randomly an ID for the mouth item.
     /// @param tokenId The current tokenId.
@@ -33,4 +27,10 @@ interface IMoodblockDescriptor {
     /// @param seed Used for the initialization of the number generator.
     /// @return The mark item id.
     function generateMarkId(uint256 tokenId, uint256 seed) external view returns (uint8);
+
+    /// @notice Generate randomly an ID for the background.
+    /// @param tokenId The current tokenId.
+    /// @param seed Used for the initialization of the number generator.
+    /// @return The background item id.
+    function generateBackgroundId(uint256 tokenId, uint256 seed) external view returns (uint8);
 }

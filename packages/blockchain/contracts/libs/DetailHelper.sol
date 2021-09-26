@@ -6,17 +6,6 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 /// @title Helper for details generation
 library DetailHelper {
-    /// @notice Call the library item function
-    /// @param lib The library address
-    /// @param id The item ID
-    function getDetailSVG(address lib, uint8 id) internal view returns (string memory) {
-        (bool success, bytes memory data) = lib.staticcall(
-            abi.encodeWithSignature(string(abi.encodePacked("item_", Strings.toString(id), "()")))
-        );
-        require(success);
-        return abi.decode(data, (string));
-    }
-
     /// @notice Generate a random number and return the index from the
     ///         corresponding interval.
     /// @param max The maximum value to generate
@@ -32,7 +21,7 @@ library DetailHelper {
         uint256 tokenId
     ) internal view returns (uint8) {
         uint256 randomNumber = generateRandom(max, seed, tokenId, selector);
-        return pickItems(randomNumber, intervals);
+        return pickItem(randomNumber, intervals);
     }
 
     /// @notice Generate random number between 1 and max
@@ -45,23 +34,23 @@ library DetailHelper {
         uint256 seed,
         uint256 tokenId,
         bytes4 selector
-    ) private view returns (uint256) {
+    ) internal view returns (uint256) {
         return
             (uint256(
                 keccak256(
                     abi.encodePacked(block.difficulty, block.number, tx.origin, tx.gasprice, selector, seed, tokenId)
                 )
-            ) % (max + 1)) + 1;
+            ) % max) + 1;
     }
 
     /// @notice Pick an item for the given random value
     /// @param val The random value
     /// @param intervals The intervals for the corresponding items
-    /// @return the item ID where : intervals[] index + 1 = item ID
-    function pickItems(uint256 val, uint256[] memory intervals) internal pure returns (uint8) {
+    /// @return the item ID where : intervals[] index = item ID
+    function pickItem(uint256 val, uint256[] memory intervals) internal pure returns (uint8) {
         for (uint256 i; i < intervals.length; i++) {
             if (val > intervals[i]) {
-                return SafeCast.toUint8(i + 1);
+                return SafeCast.toUint8(i);
             }
         }
         revert("DetailHelper: No item picked");

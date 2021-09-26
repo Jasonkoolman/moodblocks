@@ -7,7 +7,7 @@ task('mint', 'Mints a Moodblock')
   .addParam(
     'contract',
     'The `MoodblockToken` contract address',
-    '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
+    '0x0165878A594ca255338adfa4d48449f69242Eb8F',
     types.string,
   )
   .setAction(async (args, { ethers }) => {
@@ -24,6 +24,8 @@ task('mint', 'Mints a Moodblock')
 
     const moodblockCreatedEvent = receipt.events?.find(e => e.event === 'MoodblockCreated');
     const moodblockId = moodblockCreatedEvent?.args?.moodblockId;
-    const moodblockDetails = await contract.details(moodblockId);
+    const moodblockDetails = await contract.getMoodblock(moodblockId);
     console.log('Minted Moodblock with details: ', moodblockDetails);
+    const tokenURI = await contract.tokenURI(moodblockId);
+    console.log(tokenURI);
   });

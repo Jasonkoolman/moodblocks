@@ -12,7 +12,7 @@
         "type": "uint256"
       }
     ],
-    "name": "generateEyeId",
+    "name": "generateBackgroundId",
     "outputs": [
       {
         "internalType": "uint8",
@@ -36,7 +36,7 @@
         "type": "uint256"
       }
     ],
-    "name": "generateEyebrowId",
+    "name": "generateEyesId",
     "outputs": [
       {
         "internalType": "uint8",
@@ -101,27 +101,12 @@
         "components": [
           {
             "internalType": "uint8",
-            "name": "skin",
+            "name": "background",
             "type": "uint8"
           },
           {
             "internalType": "uint8",
-            "name": "face",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "eye",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "eyeColor",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "eyebrow",
+            "name": "eyes",
             "type": "uint8"
           },
           {
@@ -135,14 +120,19 @@
             "type": "uint8"
           },
           {
-            "internalType": "uint8",
-            "name": "background",
-            "type": "uint8"
+            "internalType": "uint16",
+            "name": "generation",
+            "type": "uint16"
           },
           {
             "internalType": "uint64",
-            "name": "createdAt",
+            "name": "created",
             "type": "uint64"
+          },
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
           }
         ],
         "internalType": "struct IMoodblock.Moodblock",
