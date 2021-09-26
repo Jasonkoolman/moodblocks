@@ -1,22 +1,27 @@
 import { useEffect, useState } from 'react';
+import { utils } from 'ethers';
 import { Balance } from './components/Balance';
 import { injected } from './connectors';
-import { useEagerConnect, useInactiveListener, useMoodblockFactory, useWeb3 } from './hooks';
+import { useEagerConnect, useInactiveListener, useMoodblockToken, useWeb3 } from './hooks';
 import { ConnectorNames } from './types';
 
 // TODO: Move to constants
-const MOODBLOCK_TOKEN_CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+const MOODBLOCK_TOKEN_CONTRACT_ADDRESS = '0x0165878A594ca255338adfa4d48449f69242Eb8F';
 
 const connectorsByName: { [connectorName in ConnectorNames]: any } = {
   [ConnectorNames.Injected]: injected,
 };
 
 function App() {
-  const web3 = useWeb3();
-  const { connector, account, activate, active, error } = web3;
-
+  const { connector, account, activate, active, error } = useWeb3();
   const [activatingConnector, setActivatingConnector] = useState<any>();
-  const moodblockContract = useMoodblockFactory(MOODBLOCK_TOKEN_CONTRACT_ADDRESS);
+  const { send, call } = useMoodblockToken(MOODBLOCK_TOKEN_CONTRACT_ADDRESS);
+  const [moodblock, setMoodblock] = useState<{
+    name: string;
+    image: string;
+    description: string;
+    attributes: { name: string; value: string }[];
+  } | null>(null);
 
   useEffect(() => {
     if (activatingConnector && activatingConnector === connector) {
@@ -33,14 +38,27 @@ function App() {
     activate(connectorsByName[name]);
   };
 
-  const interact = async () => {
-    if (!moodblockContract) {
-      alert('No contract found');
-      return;
-    }
-
+  const mint = async () => {
     try {
-      await moodblockContract.functions.mint();
+      const unitPrice = await call('getUnitPrice');
+      await send('mint', {
+        from: account || undefined,
+        value: unitPrice,
+      });
+      console.log('Minting Moodblock...');
+    } catch (e) {
+      console.error('Could not interact with contract', e);
+    }
+  };
+
+  const view = async () => {
+    try {
+      const totalSupply = Number(await call('totalSupply'));
+      const tokenURI = await call('tokenURI', totalSupply);
+      const response = await fetch(tokenURI);
+      const data = await response.json();
+      setMoodblock(data);
+      console.log(data);
     } catch (e) {
       console.error('Could not interact with contract', e);
     }
@@ -63,7 +81,28 @@ function App() {
       {active && (
         <>
           <Balance />
+          <button
+            type="button"
+            onClick={() => {
+              mint();
+            }}
+          >
+            Mint Moodblock
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              view();
+            }}
+          >
+            View last Moodblock
+          </button>
         </>
+      )}
+      {moodblock && (
+        <div>
+          <img src={moodblock.image} alt={moodblock.name} />
+        </div>
       )}
     </div>
   );
